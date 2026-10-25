@@ -6,34 +6,121 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RPG Futebol — Tabuleiro</title>
 <style>
-:root{--bg:#101713;--panel:#1b2720;--line:rgba(255,255,255,.78);--text:#f4f7f4;--muted:#b8c5bc}
+:root{
+  --bg:#101713;
+  --panel:#1b2720;
+  --line:rgba(255,255,255,.78);
+  --text:#f4f7f4;
+  --muted:#b8c5bc;
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
-header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;background:#17221b;border-bottom:1px solid #314238}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+header{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:16px 20px;
+  background:#17221b;
+  border-bottom:1px solid #314238;
+}
 h1{margin:0;font-size:clamp(20px,3vw,28px)}
 .subtitle{margin:4px 0 0;color:var(--muted);font-size:13px}
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-button{border:1px solid #506457;border-radius:9px;padding:9px 12px;background:#26382d;color:white;font-weight:650;cursor:pointer}
+button{
+  border:1px solid #506457;
+  border-radius:9px;
+  padding:9px 12px;
+  background:#26382d;
+  color:white;
+  font-weight:650;
+  cursor:pointer;
+}
 button:hover{background:#344a3b}
 main{max-width:1500px;margin:0 auto;padding:10px}
-.scoreboard{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;margin:0 auto 14px;padding:12px;background:var(--panel);border:1px solid #314238;border-radius:14px}
+.scoreboard{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+  margin:0 auto 14px;
+  padding:12px;
+  background:var(--panel);
+  border:1px solid #314238;
+  border-radius:14px;
+}
 .team{display:flex;align-items:center;gap:9px;font-weight:750}
 .dot{display:inline-block;width:13px;height:13px;border-radius:50%}
-.blue{background:#3296ff}.red{background:#ff5757}
-.score{display:flex;align-items:center;gap:8px;font-size:28px;font-weight:850;font-variant-numeric:tabular-nums}
+.blue{background:#3296ff}
+.red{background:#ff5757}
+.score{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:28px;
+  font-weight:850;
+  font-variant-numeric:tabular-nums;
+}
 .score button{min-width:34px;padding:3px 9px;font-size:19px}
-.pitch-wrap{width:100%;overflow:hidden;border-radius:12px;box-shadow:0 12px 36px #0006}
-#pitch{display:block;width:100%;height:auto;background:#267b43;touch-action:none;user-select:none}
+.pitch-wrap{
+  width:100%;
+  overflow:hidden;
+  border-radius:12px;
+  box-shadow:0 12px 36px #0006;
+}
+#pitch{
+  display:block;
+  width:100%;
+  height:auto;
+  background:#267b43;
+  touch-action:none;
+  user-select:none;
+}
 .player{cursor:grab;touch-action:none}
 .player:active{cursor:grabbing}
-.player text{font-weight:850;font-size:15px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
-.player circle{stroke:white;stroke-width:3;filter:drop-shadow(0 2px 2px #0006)}
-.hint{color:var(--muted);text-align:center;font-size:13px;margin:12px 0 4px}
-.bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;color:var(--muted);font-size:13px}
+.player text{
+  font-weight:850;
+  text-anchor:middle;
+  dominant-baseline:central;
+  pointer-events:none;
+}
+.player circle{
+  filter:drop-shadow(0 2px 2px #0006);
+}
+.hint{
+  color:var(--muted);
+  text-align:center;
+  font-size:13px;
+  margin:12px 0 4px;
+}
+.bottom{
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  margin-top:14px;
+  color:var(--muted);
+  font-size:13px;
+}
 .pill{border:1px solid #3b5143;border-radius:999px;padding:5px 9px}
-@media(max-width:600px){header{padding:13px}main{padding:9px}.scoreboard{gap:10px}.team{font-size:13px}.score{font-size:23px}}
+@media(max-width:600px){
+  header{padding:13px}
+  main{padding:9px}
+  .scoreboard{gap:10px}
+  .team{font-size:13px}
+  .score{font-size:23px}
+}
 </style>
 </head>
+
 <body>
 <header>
   <div>
@@ -46,56 +133,71 @@ main{max-width:1500px;margin:0 auto;padding:10px}
     <button id="reset">Reiniciar campo</button>
   </div>
 </header>
+
 <main>
   <section class="scoreboard" aria-label="Placar">
     <div class="team"><span class="dot blue"></span> AZUL</div>
-    <div class="score"><button id="blueMinus">−</button><span id="blueScore">0</span><button id="bluePlus">+</button></div>
+    <div class="score">
+      <button id="blueMinus">−</button>
+      <span id="blueScore">0</span>
+      <button id="bluePlus">+</button>
+    </div>
     <span style="color:#7e9184;font-weight:800">×</span>
-    <div class="score"><button id="redMinus">−</button><span id="redScore">0</span><button id="redPlus">+</button></div>
+    <div class="score">
+      <button id="redMinus">−</button>
+      <span id="redScore">0</span>
+      <button id="redPlus">+</button>
+    </div>
     <div class="team"><span class="dot red"></span> VERMELHO</div>
   </section>
 
   <div class="pitch-wrap">
-    <svg id="pitch" viewBox="0 0 1000 620" role="img" aria-label="Campo de futebol com peças arrastáveis">
+    <svg id="pitch" viewBox="0 0 1000 620"
+         role="img" aria-label="Campo de futebol com peças arrastáveis">
+
       <defs>
-        <pattern id="grass" width="200" height="620" patternUnits="userSpaceOnUse">
-          <rect width="100" height="620" fill="#2b884b"></rect>
-          <rect x="100" width="100" height="620" fill="#247a41"></rect>
+        <pattern id="grass" width="200" height="620"
+                 patternUnits="userSpaceOnUse">
+          <rect width="100" height="620" fill="#2b884b"/>
+          <rect x="100" width="100" height="620" fill="#247a41"/>
         </pattern>
 
-        <!-- Grade de 21 colunas por 14 linhas -->
+        <!-- Grade visual de 21 colunas por 14 linhas -->
         <pattern id="tileGrid"
-          x="25" y="25"
-          width="45.238095" height="40.714286"
-          patternUnits="userSpaceOnUse">
+                 x="25" y="25"
+                 width="45.238095" height="40.714286"
+                 patternUnits="userSpaceOnUse">
           <path d="M 45.238095 0 H 0 V 40.714286"
-            fill="none"
-            stroke="#ffffff"
-            stroke-opacity="0.30"
-            stroke-width="1.2"/>
+                fill="none"
+                stroke="#ffffff"
+                stroke-opacity="0.28"
+                stroke-width="1.2"/>
         </pattern>
       </defs>
 
       <rect width="1000" height="620" fill="url(#grass)"/>
 
-      <!-- Tiles -->
+      <!-- Linhas dos tiles: apenas referência visual -->
       <rect x="25" y="25" width="950" height="570"
-        fill="url(#tileGrid)"/>
+            fill="url(#tileGrid)"/>
 
-      <!-- Marcações do campo -->
+      <!-- Marcações tradicionais do campo -->
       <g fill="none" stroke="var(--line)" stroke-width="4">
         <rect x="25" y="25" width="950" height="570"/>
         <line x1="500" y1="25" x2="500" y2="595"/>
         <circle cx="500" cy="310" r="83"/>
         <circle cx="500" cy="310" r="4" fill="var(--line)"/>
+
         <rect x="25" y="170" width="145" height="280"/>
         <rect x="25" y="235" width="58" height="150"/>
         <circle cx="115" cy="310" r="3" fill="var(--line)"/>
         <path d="M170 245 A75 75 0 0 1 170 375"/>
+
         <rect x="830" y="170" width="145" height="280"/>
         <rect x="917" y="235" width="58" height="150"/>
         <circle cx="885" cy="310" r="3" fill="var(--line)"/>
         <path d="M830 245 A75 75 0 0 0 830 375"/>
+
         <path d="M25 285 H8 V335 H25 M975 285 H992 V335 H975"/>
       </g>
 
@@ -103,10 +205,12 @@ main{max-width:1500px;margin:0 auto;padding:10px}
     </svg>
   </div>
 
-  <p class="hint">Arraste os jogadores e a bola com o mouse ou toque e mova. Ao soltar, a peça encaixa no tile mais próximo.</p>
+  <p class="hint">
+    Arraste jogadores e bola livremente pelo campo. Os tiles são apenas uma referência visual.
+  </p>
 
   <div class="bottom">
-    <span class="pill">5 jogadores por equipe no início</span>
+    <span class="pill">5 jogadores por equipe: 1 goleiro + 4 de linha</span>
     <span id="status">Protótipo local: as mudanças aparecem apenas neste navegador.</span>
   </div>
 </main>
@@ -117,206 +221,196 @@ main{max-width:1500px;margin:0 auto;padding:10px}
   const layer = document.getElementById('players');
   const NS = 'http://www.w3.org/2000/svg';
 
-  const COLS = 21;
-  const ROWS = 14;
-  const FIELD = { x: 25, y: 25, width: 950, height: 570 };
-  const TILE_W = FIELD.width / COLS;
-  const TILE_H = FIELD.height / ROWS;
-
   let players = [];
   let nextId = 1;
   let dragging = null;
   let scores = {blue:0,red:0};
 
+  // Cada equipe começa com 1 goleiro e 4 jogadores de linha.
   const starts = [
-    ['blue',1,210,190],
-    ['blue',2,340,250],
-    ['blue',3,260,310],
-    ['blue',4,340,380],
-    ['blue',5,210,430],
-    ['red',1,790,190],
-    ['red',2,660,250],
-    ['red',3,740,310],
-    ['red',4,660,380],
-    ['red',5,790,430]
+    ['blue',1,55,310,'goalkeeper'],
+    ['blue',2,210,190,'field'],
+    ['blue',3,340,250,'field'],
+    ['blue',4,260,370,'field'],
+    ['blue',5,210,450,'field'],
+
+    ['red',1,945,310,'goalkeeper'],
+    ['red',2,790,190,'field'],
+    ['red',3,660,250,'field'],
+    ['red',4,740,370,'field'],
+    ['red',5,790,450,'field']
   ];
 
-  // Centraliza uma peça no tile mais próximo.
-  function snapToTile(x, y) {
-    const col = Math.max(0, Math.min(COLS - 1,
-      Math.floor((x - FIELD.x) / TILE_W)));
-
-    const row = Math.max(0, Math.min(ROWS - 1,
-      Math.floor((y - FIELD.y) / TILE_H)));
-
-    return {
-      x: FIELD.x + (col + 0.5) * TILE_W,
-      y: FIELD.y + (row + 0.5) * TILE_H
-    };
-  }
-
-  function createPlayer(team, number, x, y) {
-    const pos = snapToTile(x, y);
-
-    const p = {
-      id: nextId++,
+  function createPlayer(team,number,x,y,type='field'){
+    const p={
+      id:nextId++,
       team,
       number,
-      x: pos.x,
-      y: pos.y
+      type,
+      x,
+      y
     };
 
     players.push(p);
     drawPlayer(p);
   }
 
-  function drawPlayer(p) {
-    const g = document.createElementNS(NS, 'g');
-    g.setAttribute('class', 'player');
-    g.dataset.id = p.id;
+  function drawPlayer(p){
+    const g=document.createElementNS(NS,'g');
+    g.setAttribute('class','player');
+    g.dataset.id=p.id;
 
-    const c = document.createElementNS(NS, 'circle');
-    c.setAttribute('cx', p.x);
-    c.setAttribute('cy', p.y);
-    c.setAttribute('r', p.type === 'ball' ? 9 : 15);
-    c.setAttribute('fill',
-      p.type === 'ball' ? '#ffffff' :
-      (p.team === 'blue' ? '#1684f8' : '#f04444'));
-    c.setAttribute('stroke', p.type === 'ball' ? '#202020' : '#ffffff');
-    c.setAttribute('stroke-width', p.type === 'ball' ? 2 : 2.5);
+    const isBall=p.type==='ball';
+    const isGoalkeeper=p.type==='goalkeeper';
+
+    // Mantém os jogadores de linha pequenos.
+    // O goleiro é um pouco maior e a bola continua pequena.
+    const radius=isBall ? 6 : (isGoalkeeper ? 13 : 10);
+
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',p.x);
+    c.setAttribute('cy',p.y);
+    c.setAttribute('r',radius);
+    c.setAttribute(
+      'fill',
+      isBall ? '#ffffff' :
+      (p.team==='blue' ? '#1684f8' : '#f04444')
+    );
+    c.setAttribute('stroke',isBall ? '#202020' : '#ffffff');
+    c.setAttribute('stroke-width',isBall ? 1.5 : 2);
     g.append(c);
 
-    if (p.type === 'ball') {
-      const mark = document.createElementNS(NS, 'circle');
-      mark.setAttribute('cx', p.x);
-      mark.setAttribute('cy', p.y);
-      mark.setAttribute('r', 3);
-      mark.setAttribute('fill', '#222222');
+    if(isBall){
+      const mark=document.createElementNS(NS,'circle');
+      mark.setAttribute('cx',p.x);
+      mark.setAttribute('cy',p.y);
+      mark.setAttribute('r',2);
+      mark.setAttribute('fill','#222222');
       g.append(mark);
-    } else {
-      const t = document.createElementNS(NS, 'text');
-      t.setAttribute('x', p.x);
-      t.setAttribute('y', p.y + 1);
-      t.setAttribute('fill', '#fff');
-      t.setAttribute('font-size', '11');
-      t.textContent = p.number;
+    }else{
+      const t=document.createElementNS(NS,'text');
+      t.setAttribute('x',p.x);
+      t.setAttribute('y',p.y+0.5);
+      t.setAttribute('fill','#ffffff');
+      t.setAttribute('font-size',isGoalkeeper ? '9' : '8');
+      t.textContent=isGoalkeeper ? 'G' : p.number;
       g.append(t);
     }
 
     layer.append(g);
-    g.addEventListener('pointerdown', startDrag);
+    g.addEventListener('pointerdown',startDrag);
   }
 
-  function pointFromEvent(e) {
-    const pt = svg.createSVGPoint();
-    pt.x = e.clientX;
-    pt.y = e.clientY;
+  function pointFromEvent(e){
+    const pt=svg.createSVGPoint();
+    pt.x=e.clientX;
+    pt.y=e.clientY;
     return pt.matrixTransform(svg.getScreenCTM().inverse());
   }
 
-  function updatePiecePosition(p) {
-    const g = layer.querySelector(`[data-id="${p.id}"]`);
-    if (!g) return;
+  function updatePiecePosition(p){
+    const g=layer.querySelector(`[data-id="${p.id}"]`);
+    if(!g)return;
 
-    g.querySelectorAll('circle').forEach(c => {
-      c.setAttribute('cx', p.x);
-      c.setAttribute('cy', p.y);
+    g.querySelectorAll('circle').forEach(c=>{
+      c.setAttribute('cx',p.x);
+      c.setAttribute('cy',p.y);
     });
 
-    const t = g.querySelector('text');
-    if (t) {
-      t.setAttribute('x', p.x);
-      t.setAttribute('y', p.y + 1);
+    const t=g.querySelector('text');
+    if(t){
+      t.setAttribute('x',p.x);
+      t.setAttribute('y',p.y+0.5);
     }
   }
 
-  function startDrag(e) {
+  function startDrag(e){
     e.preventDefault();
 
-    const g = e.currentTarget;
-    const p = players.find(v => v.id === Number(g.dataset.id));
-    if (!p) return;
+    const g=e.currentTarget;
+    const p=players.find(v=>v.id===Number(g.dataset.id));
+    if(!p)return;
 
-    dragging = { p, pointerId: e.pointerId };
+    dragging={p,pointerId:e.pointerId};
 
-    try {
+    try{
       g.setPointerCapture(e.pointerId);
-    } catch (err) {}
+    }catch(err){}
   }
 
-  svg.addEventListener('pointermove', e => {
-    if (!dragging || dragging.pointerId !== e.pointerId) return;
+  svg.addEventListener('pointermove',e=>{
+    if(!dragging||dragging.pointerId!==e.pointerId)return;
 
-    const pos = pointFromEvent(e);
-    dragging.p.x = Math.max(FIELD.x, Math.min(FIELD.x + FIELD.width, pos.x));
-    dragging.p.y = Math.max(FIELD.y, Math.min(FIELD.y + FIELD.height, pos.y));
+    const pos=pointFromEvent(e);
+
+    // Movimento livre: não prende a peça aos tiles.
+    dragging.p.x=Math.max(25,Math.min(975,pos.x));
+    dragging.p.y=Math.max(25,Math.min(595,pos.y));
 
     updatePiecePosition(dragging.p);
   });
 
-  function stopDrag(e) {
-    if (!dragging || dragging.pointerId !== e.pointerId) return;
-
-    // Encaixa a peça no centro do tile ao soltar.
-    const pos = snapToTile(dragging.p.x, dragging.p.y);
-    dragging.p.x = pos.x;
-    dragging.p.y = pos.y;
-
-    updatePiecePosition(dragging.p);
-    dragging = null;
+  function stopDrag(e){
+    if(dragging&&dragging.pointerId===e.pointerId){
+      // A peça fica exatamente onde foi solta.
+      dragging=null;
+    }
   }
 
-  svg.addEventListener('pointerup', stopDrag);
-  svg.addEventListener('pointercancel', stopDrag);
+  svg.addEventListener('pointerup',stopDrag);
+  svg.addEventListener('pointercancel',stopDrag);
 
-  function updateScore(team, delta) {
-    scores[team] = Math.max(0, scores[team] + delta);
-    document.getElementById(team + 'Score').textContent = scores[team];
+  function updateScore(team,delta){
+    scores[team]=Math.max(0,scores[team]+delta);
+    document.getElementById(team+'Score').textContent=scores[team];
   }
 
-  document.getElementById('bluePlus').onclick = () => updateScore('blue', 1);
-  document.getElementById('blueMinus').onclick = () => updateScore('blue', -1);
-  document.getElementById('redPlus').onclick = () => updateScore('red', 1);
-  document.getElementById('redMinus').onclick = () => updateScore('red', -1);
+  document.getElementById('bluePlus').onclick=()=>updateScore('blue',1);
+  document.getElementById('blueMinus').onclick=()=>updateScore('blue',-1);
+  document.getElementById('redPlus').onclick=()=>updateScore('red',1);
+  document.getElementById('redMinus').onclick=()=>updateScore('red',-1);
 
-  document.getElementById('addBlue').onclick = () => {
-    createPlayer('blue',
-      players.filter(p => p.team === 'blue').length + 1,
-      250, 310);
+  document.getElementById('addBlue').onclick=()=>{
+    createPlayer(
+      'blue',
+      players.filter(p=>p.team==='blue'&&p.type!=='ball').length+1,
+      250,310
+    );
   };
 
-  document.getElementById('addRed').onclick = () => {
-    createPlayer('red',
-      players.filter(p => p.team === 'red').length + 1,
-      750, 310);
+  document.getElementById('addRed').onclick=()=>{
+    createPlayer(
+      'red',
+      players.filter(p=>p.team==='red'&&p.type!=='ball').length+1,
+      750,310
+    );
   };
 
-  function resetGame() {
-    players = [];
-    nextId = 1;
-    scores = {blue:0,red:0};
+  function resetGame(){
+    players=[];
+    nextId=1;
+    scores={blue:0,red:0};
 
-    document.getElementById('blueScore').textContent = '0';
-    document.getElementById('redScore').textContent = '0';
-    layer.innerHTML = '';
+    document.getElementById('blueScore').textContent='0';
+    document.getElementById('redScore').textContent='0';
+    layer.innerHTML='';
 
-    starts.forEach(s => createPlayer(...s));
+    starts.forEach(s=>createPlayer(...s));
 
-    const pos = snapToTile(500, 310);
-    const ball = {
-      id: nextId++,
-      type: 'ball',
-      team: 'ball',
-      number: '',
-      x: pos.x,
-      y: pos.y
+    const ball={
+      id:nextId++,
+      type:'ball',
+      team:'ball',
+      number:'',
+      x:500,
+      y:310
     };
 
     players.push(ball);
     drawPlayer(ball);
   }
 
-  document.getElementById('reset').onclick = resetGame;
+  document.getElementById('reset').onclick=resetGame;
 
   resetGame();
 })();
