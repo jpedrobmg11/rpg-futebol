@@ -54,6 +54,7 @@ main{max-width:1500px;margin:0 auto;padding:10px}
     <div class="score"><button id="redMinus">−</button><span id="redScore">0</span><button id="redPlus">+</button></div>
     <div class="team"><span class="dot red"></span> VERMELHO</div>
   </section>
+
   <div class="pitch-wrap">
     <svg id="pitch" viewBox="0 0 1000 620" role="img" aria-label="Campo de futebol com peças arrastáveis">
       <defs>
@@ -61,8 +62,27 @@ main{max-width:1500px;margin:0 auto;padding:10px}
           <rect width="100" height="620" fill="#2b884b"></rect>
           <rect x="100" width="100" height="620" fill="#247a41"></rect>
         </pattern>
+
+        <!-- Grade de 21 colunas por 14 linhas -->
+        <pattern id="tileGrid"
+          x="25" y="25"
+          width="45.238095" height="40.714286"
+          patternUnits="userSpaceOnUse">
+          <path d="M 45.238095 0 H 0 V 40.714286"
+            fill="none"
+            stroke="#ffffff"
+            stroke-opacity="0.30"
+            stroke-width="1.2"/>
+        </pattern>
       </defs>
+
       <rect width="1000" height="620" fill="url(#grass)"/>
+
+      <!-- Tiles -->
+      <rect x="25" y="25" width="950" height="570"
+        fill="url(#tileGrid)"/>
+
+      <!-- Marcações do campo -->
       <g fill="none" stroke="var(--line)" stroke-width="4">
         <rect x="25" y="25" width="950" height="570"/>
         <line x1="500" y1="25" x2="500" y2="595"/>
@@ -78,145 +98,226 @@ main{max-width:1500px;margin:0 auto;padding:10px}
         <path d="M830 245 A75 75 0 0 0 830 375"/>
         <path d="M25 285 H8 V335 H25 M975 285 H992 V335 H975"/>
       </g>
+
       <g id="players"></g>
     </svg>
   </div>
-  <p class="hint">Arraste os jogadores e a bola com o mouse ou toque e mova. Use os botões para alterar o placar ou adicionar peças.</p>
+
+  <p class="hint">Arraste os jogadores e a bola com o mouse ou toque e mova. Ao soltar, a peça encaixa no tile mais próximo.</p>
+
   <div class="bottom">
     <span class="pill">5 jogadores por equipe no início</span>
     <span id="status">Protótipo local: as mudanças aparecem apenas neste navegador.</span>
   </div>
 </main>
+
 <script>
 (() => {
   const svg = document.getElementById('pitch');
   const layer = document.getElementById('players');
   const NS = 'http://www.w3.org/2000/svg';
+
+  const COLS = 21;
+  const ROWS = 14;
+  const FIELD = { x: 25, y: 25, width: 950, height: 570 };
+  const TILE_W = FIELD.width / COLS;
+  const TILE_H = FIELD.height / ROWS;
+
   let players = [];
   let nextId = 1;
   let dragging = null;
   let scores = {blue:0,red:0};
 
   const starts = [
-    ['blue',1,210,190],['blue',2,340,250],
-    ['blue',3,260,310],['blue',4,340,380],
-    ['blue',5,210,430],['red',1,790,190],
-    ['red',2,660,250],['red',3,740,310],
-    ['red',4,660,380],['red',5,790,430]
+    ['blue',1,210,190],
+    ['blue',2,340,250],
+    ['blue',3,260,310],
+    ['blue',4,340,380],
+    ['blue',5,210,430],
+    ['red',1,790,190],
+    ['red',2,660,250],
+    ['red',3,740,310],
+    ['red',4,660,380],
+    ['red',5,790,430]
   ];
 
-  function createPlayer(team,number,x,y){
-    const p={id:nextId++,team,number,x,y};
+  // Centraliza uma peça no tile mais próximo.
+  function snapToTile(x, y) {
+    const col = Math.max(0, Math.min(COLS - 1,
+      Math.floor((x - FIELD.x) / TILE_W)));
+
+    const row = Math.max(0, Math.min(ROWS - 1,
+      Math.floor((y - FIELD.y) / TILE_H)));
+
+    return {
+      x: FIELD.x + (col + 0.5) * TILE_W,
+      y: FIELD.y + (row + 0.5) * TILE_H
+    };
+  }
+
+  function createPlayer(team, number, x, y) {
+    const pos = snapToTile(x, y);
+
+    const p = {
+      id: nextId++,
+      team,
+      number,
+      x: pos.x,
+      y: pos.y
+    };
+
     players.push(p);
     drawPlayer(p);
   }
 
-  function drawPlayer(p){
-    const g=document.createElementNS(NS,'g');
-    g.setAttribute('class','player');
-    g.dataset.id=p.id;
+  function drawPlayer(p) {
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'player');
+    g.dataset.id = p.id;
 
-    const c=document.createElementNS(NS,'circle');
-    c.setAttribute('cx',p.x);
-    c.setAttribute('cy',p.y);
-    c.setAttribute('r',p.type==='ball'?9:15);
-    c.setAttribute('fill',p.type==='ball'?'#ffffff':(p.team==='blue'?'#1684f8':'#f04444'));
-    c.setAttribute('stroke',p.type==='ball'?'#202020':'#ffffff');
-    c.setAttribute('stroke-width',p.type==='ball'?2:2.5);
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', p.x);
+    c.setAttribute('cy', p.y);
+    c.setAttribute('r', p.type === 'ball' ? 9 : 15);
+    c.setAttribute('fill',
+      p.type === 'ball' ? '#ffffff' :
+      (p.team === 'blue' ? '#1684f8' : '#f04444'));
+    c.setAttribute('stroke', p.type === 'ball' ? '#202020' : '#ffffff');
+    c.setAttribute('stroke-width', p.type === 'ball' ? 2 : 2.5);
     g.append(c);
 
-    if(p.type==='ball'){
-      const mark=document.createElementNS(NS,'circle');
-      mark.setAttribute('cx',p.x);
-      mark.setAttribute('cy',p.y);
-      mark.setAttribute('r',3);
-      mark.setAttribute('fill','#222222');
+    if (p.type === 'ball') {
+      const mark = document.createElementNS(NS, 'circle');
+      mark.setAttribute('cx', p.x);
+      mark.setAttribute('cy', p.y);
+      mark.setAttribute('r', 3);
+      mark.setAttribute('fill', '#222222');
       g.append(mark);
-    }else{
-      const t=document.createElementNS(NS,'text');
-      t.setAttribute('x',p.x);
-      t.setAttribute('y',p.y+1);
-      t.setAttribute('fill','#fff');
-      t.setAttribute('font-size','11');
-      t.textContent=p.number;
+    } else {
+      const t = document.createElementNS(NS, 'text');
+      t.setAttribute('x', p.x);
+      t.setAttribute('y', p.y + 1);
+      t.setAttribute('fill', '#fff');
+      t.setAttribute('font-size', '11');
+      t.textContent = p.number;
       g.append(t);
     }
 
     layer.append(g);
-    g.addEventListener('pointerdown',startDrag);
+    g.addEventListener('pointerdown', startDrag);
   }
 
-  function pointFromEvent(e){
-    const pt=svg.createSVGPoint();
-    pt.x=e.clientX;
-    pt.y=e.clientY;
+  function pointFromEvent(e) {
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
     return pt.matrixTransform(svg.getScreenCTM().inverse());
   }
 
-  function startDrag(e){
-    e.preventDefault();
-    const g=e.currentTarget;
-    const p=players.find(v=>v.id===Number(g.dataset.id));
-    if(!p)return;
-    dragging={p,pointerId:e.pointerId};
-    try{g.setPointerCapture(e.pointerId)}catch(err){}
+  function updatePiecePosition(p) {
+    const g = layer.querySelector(`[data-id="${p.id}"]`);
+    if (!g) return;
+
+    g.querySelectorAll('circle').forEach(c => {
+      c.setAttribute('cx', p.x);
+      c.setAttribute('cy', p.y);
+    });
+
+    const t = g.querySelector('text');
+    if (t) {
+      t.setAttribute('x', p.x);
+      t.setAttribute('y', p.y + 1);
+    }
   }
 
-  svg.addEventListener('pointermove',e=>{
-    if(!dragging||dragging.pointerId!==e.pointerId)return;
-    const pos=pointFromEvent(e);
-    dragging.p.x=Math.max(28,Math.min(972,pos.x));
-    dragging.p.y=Math.max(28,Math.min(592,pos.y));
-    const g=layer.querySelector(`[data-id="${dragging.p.id}"]`);
-    if(!g)return;
-    g.querySelectorAll('circle').forEach(c=>{
-      c.setAttribute('cx',dragging.p.x);
-      c.setAttribute('cy',dragging.p.y);
-    });
-    const t=g.querySelector('text');
-    if(t){
-      t.setAttribute('x',dragging.p.x);
-      t.setAttribute('y',dragging.p.y+1);
-    }
+  function startDrag(e) {
+    e.preventDefault();
+
+    const g = e.currentTarget;
+    const p = players.find(v => v.id === Number(g.dataset.id));
+    if (!p) return;
+
+    dragging = { p, pointerId: e.pointerId };
+
+    try {
+      g.setPointerCapture(e.pointerId);
+    } catch (err) {}
+  }
+
+  svg.addEventListener('pointermove', e => {
+    if (!dragging || dragging.pointerId !== e.pointerId) return;
+
+    const pos = pointFromEvent(e);
+    dragging.p.x = Math.max(FIELD.x, Math.min(FIELD.x + FIELD.width, pos.x));
+    dragging.p.y = Math.max(FIELD.y, Math.min(FIELD.y + FIELD.height, pos.y));
+
+    updatePiecePosition(dragging.p);
   });
 
-  function stopDrag(e){
-    if(dragging&&dragging.pointerId===e.pointerId)dragging=null;
+  function stopDrag(e) {
+    if (!dragging || dragging.pointerId !== e.pointerId) return;
+
+    // Encaixa a peça no centro do tile ao soltar.
+    const pos = snapToTile(dragging.p.x, dragging.p.y);
+    dragging.p.x = pos.x;
+    dragging.p.y = pos.y;
+
+    updatePiecePosition(dragging.p);
+    dragging = null;
   }
-  svg.addEventListener('pointerup',stopDrag);
-  svg.addEventListener('pointercancel',stopDrag);
 
-  function updateScore(team,delta){
-    scores[team]=Math.max(0,scores[team]+delta);
-    document.getElementById(team+'Score').textContent=scores[team];
+  svg.addEventListener('pointerup', stopDrag);
+  svg.addEventListener('pointercancel', stopDrag);
+
+  function updateScore(team, delta) {
+    scores[team] = Math.max(0, scores[team] + delta);
+    document.getElementById(team + 'Score').textContent = scores[team];
   }
 
-  document.getElementById('bluePlus').onclick=()=>updateScore('blue',1);
-  document.getElementById('blueMinus').onclick=()=>updateScore('blue',-1);
-  document.getElementById('redPlus').onclick=()=>updateScore('red',1);
-  document.getElementById('redMinus').onclick=()=>updateScore('red',-1);
+  document.getElementById('bluePlus').onclick = () => updateScore('blue', 1);
+  document.getElementById('blueMinus').onclick = () => updateScore('blue', -1);
+  document.getElementById('redPlus').onclick = () => updateScore('red', 1);
+  document.getElementById('redMinus').onclick = () => updateScore('red', -1);
 
-  document.getElementById('addBlue').onclick=()=>{
-    createPlayer('blue',players.filter(p=>p.team==='blue').length+1,250,310);
-  };
-  document.getElementById('addRed').onclick=()=>{
-    createPlayer('red',players.filter(p=>p.team==='red').length+1,750,310);
+  document.getElementById('addBlue').onclick = () => {
+    createPlayer('blue',
+      players.filter(p => p.team === 'blue').length + 1,
+      250, 310);
   };
 
-  function resetGame(){
-    players=[];
-    nextId=1;
-    scores={blue:0,red:0};
-    document.getElementById('blueScore').textContent='0';
-    document.getElementById('redScore').textContent='0';
-    layer.innerHTML='';
-    starts.forEach(s=>createPlayer(...s));
-    const ball={id:nextId++,type:'ball',team:'ball',number:'',x:500,y:310};
+  document.getElementById('addRed').onclick = () => {
+    createPlayer('red',
+      players.filter(p => p.team === 'red').length + 1,
+      750, 310);
+  };
+
+  function resetGame() {
+    players = [];
+    nextId = 1;
+    scores = {blue:0,red:0};
+
+    document.getElementById('blueScore').textContent = '0';
+    document.getElementById('redScore').textContent = '0';
+    layer.innerHTML = '';
+
+    starts.forEach(s => createPlayer(...s));
+
+    const pos = snapToTile(500, 310);
+    const ball = {
+      id: nextId++,
+      type: 'ball',
+      team: 'ball',
+      number: '',
+      x: pos.x,
+      y: pos.y
+    };
+
     players.push(ball);
     drawPlayer(ball);
   }
 
-  document.getElementById('reset').onclick=resetGame;
+  document.getElementById('reset').onclick = resetGame;
+
   resetGame();
 })();
 </script>
